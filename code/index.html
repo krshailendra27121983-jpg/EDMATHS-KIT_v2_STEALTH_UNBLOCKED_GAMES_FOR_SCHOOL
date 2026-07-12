@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Login</title>
+    
+    <!-- 1. FIXED: Added 'fonts.' subdomain back to preconnect links -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- 2. FIXED: Added 'fonts.' subdomain back to main stylesheet request -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Major+Mono+Display&display=swap" rel="stylesheet">
+    
+    <!-- 3. Your Internal Stylesheet (Must come last to apply properly) -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- 4. Logic controller script -->
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+    <div id="app-container">
+        <div class="login-wrapper">
+            <header class="login-header">
+                <h2>CORE_GATEWAY//AUTH</h2>
+                <p>ACCESS RESTRICTED TO AUTHORIZED TERMINALS</p>
+            </header>
+            <main class="login-form">
+                <div class="input-group">
+                    <span class="prompt" id="node-hint">> RETRIEVING_NODE_METRICS...</span>
+                    <input type="password" id="password-input" autocomplete="off" autofocus>
+                </div>
+                <button id="login-btn">INITIALIZE_BOOT_SEQUENCE</button>
+                <p id="error-log" class="error-msg"></p>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

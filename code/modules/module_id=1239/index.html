@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hyperion-module</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000000;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #flash-container {
+            width: 100vw;
+            height: 100vh;
+        }
+        ruffle-player {
+            width: 100% !important;
+            height: 100% !important;
+            display: block !important;
+        }
+    </style>
+    
+    <script src="ruffle.js"></script>
+</head>
+<body>
+    <div id="flash-container"></div>
+
+    <script>
+        window.RufflePlayer = window.RufflePlayer || {};
+        window.addEventListener("load", () => {
+            const ruffle = window.RufflePlayer.newest();
+            const player = ruffle.createPlayer();
+            const container = document.getElementById("flash-container");
+            container.appendChild(player);
+            
+
+            player.config = {
+                letterbox: "on",
+                scale: "showAll",
+                forceScale: true,
+                quality: "high"
+            };
+
+            
+            player.load("CODE_TUT_FLASH.swf"); 
+        });
+    </script>
+</body>
+</html>

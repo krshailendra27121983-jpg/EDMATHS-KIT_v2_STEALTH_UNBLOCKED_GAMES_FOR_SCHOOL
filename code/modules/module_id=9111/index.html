@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Space Waves</title>
+    <link rel="stylesheet" href="./TemplateData/style.css">
+    <link rel="manifest" href="./manifest.json">
+     </head>
+  <body class="noselect" >
+    <div id="unity-container">
+      <canvas id="unity-canvas"></canvas>
+    </div>
+    <div id="loading-cover" style="display:none;">
+      <div id="unity-loading-bar">
+        <div id="unity-logo"><img src="/x/spacewavesgame/logo.png"></div>
+         <p>
+    <span class="letter">x</span>
+    <span class="letter">e</span>
+    <span class="letter">l</span>
+    <span class="letter">l</span>
+    <span class="letter">u</span>
+    <span class="letter">f</span>
+    <span class="letter">.</span>
+    <span class="letter">c</span>
+    <span class="letter">o</span>
+    <span class="letter">m</span>
+  </p>
+        <div id="unity-progress-bar-empty" style="display: none;">
+          <div id="unity-progress-bar-full"></div>
+        </div>
+        <div class="spinner"></div>
+   
+      </div>
+    </div>
+	 <div class="menu-container">
+    <button class="main-button" id="toggleButton">🔥</button>
+    <div class="submenu" id="submenu">
+    <button onclick="goTo('https://play.google.com/store/apps/details?id=com.xelluf.wbbfff')"><img src="/foto/vex8game.webp" alt="Icon 8"></button>
+    <button onclick="goTo('https://play.google.com/store/apps/details?id=com.xelluf.geovibes')"><img src="/foto/geovibes.webp" alt="Icon 1"></button>
+    <button onclick="goTo('https://play.google.com/store/apps/details?id=com.xelluf.fortzone')"><img src="/foto/fortzone.webp" alt="Icon 2"></button>
+    <button onclick="goTo('https://play.google.com/store/apps/details?id=com.xelluf.digwormio')"><img src="/foto/merge.webp" alt="Icon 3"></button>
+    <button onclick="goTo('https://play.google.com/store/apps/details?id=com.xelluf.blade')"><img src="/foto/icy.webp" alt="Icon 4"></button>
+    <button onclick="goTo('https://play.google.com/store/apps/details?id=co.alaamy.slopespooky')"><img src="/foto/slopemode.webp" alt="Icon 5"></button>
+    <button onclick="goTo('https://play.google.com/store/apps/details?id=com.xelluf.hexanautio')"><img src="/foto/hexanaut.webp" alt="Icon 6"></button>
+    <button onclick="goTo('https://play.google.com/store/apps/details?id=com.xelluf.cob')"><img src="/foto/remove-ads.webp" alt="Icon 7"></button>
+        </div>
+  </div>
+     <script>
+      document.addEventListener("DOMContentLoaded", () => {
+	console.log("Migration START");
+        microsoftMigration();
+      });
+	  
+      window.addEventListener("PlayerPrefsReady", () => {
+        migratePlayerPrefs();
+      });
+    </script>
+	
+    <script>
+	  window.addEventListener("load", function () {
+        if ("serviceWorker" in navigator) {
+          navigator.serviceWorker.register("ServiceWorker.js");
+        }
+      });
+	  
+	  const container = document.querySelector("#unity-container");
+      const canvas = document.querySelector("#unity-canvas");
+      const loadingCover = document.querySelector("#loading-cover");
+      const progressBarEmpty = document.querySelector("#unity-progress-bar-empty");
+      const progressBarFull = document.querySelector("#unity-progress-bar-full");
+      const spinner = document.querySelector('.spinner');
+	
+      const buildUrl = "Build";
+      const loaderUrl = buildUrl + "/dae5c7bd2b15915f51ae4e56b8f5367d.loader.js";
+      const config = {
+        dataUrl: buildUrl + "/2c9bc0098489d5e75341d59019263bfa.data.unityweb",
+        frameworkUrl: buildUrl + "/e00c2c9270a426875b72c5a93857f1df.framework.js.unityweb",
+        codeUrl: buildUrl + "/08df7b704ea55604fb660e8664abbbb4.wasm.unityweb",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "xelluf",
+        productName: "Space Waves",
+        productVersion: "1.1.2-ms",
+		matchWebGLToCanvasSize: "false"
+      };
+	  
+      loadingCover.style.display = "";
+	  
+	  var needMigrate = false;
+	  var gameInstance;
+      var script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
+		  spinner.style.display = "none";
+          progressBarEmpty.style.display = "";
+          progressBarFull.style.width = 100 * progress + "%";
+        }).then((unityInstance) => {
+		  console.log("<do.G> Unity inited");
+          gameInstance = unityInstance;
+          loadingCover.style.display = "none";
+		  resizeCanvas();
+		  loadAds();
+		  
+		  if (needMigrate) {
+			needMigrate = false;
+		    gameInstance.SendMessage('MSStartSDK', 'OnMigratePlayerPrefs', window["fetchPlayerPrefs"]);
+		  }
+		  
+        }).catch((message) => {
+          alert(message);
+        });
+      };
+      document.body.appendChild(script);
+	  
+	  // Focus
+  	  function setFocus() {
+  	    container.focus();
+  		window.focus();
+  		canvas.focus();
+  	  }
+
+  	  window.addEventListener("touchstart", () => {
+  	    setFocus();
+  	  });
+  	  window.addEventListener("pointerdown", () => {
+  	    setFocus();
+  	  });
+  	  window.addEventListener("resize", () => {
+  	    setFocus();
+		resizeCanvas();
+  	  });
+	  
+	  function resizeCanvas() {
+		var pixelRatio = window.devicePixelRatio || 1;
+		var width = canvas.clientWidth * pixelRatio;
+		var height = canvas.clientHeight * pixelRatio;
+			
+		if (canvas.width != width || canvas.height != height) {
+			if (height > 1080) {
+				canvas.width = Math.floor(width / height * 1080);
+				canvas.height = 1080;
+			}
+			else
+			{
+				canvas.width = width;
+				canvas.height = height;
+			}
+		}
+	  }
+	  
+	  function migratePlayerPrefs() {
+	    if (typeof gameInstance !== 'undefined') {
+		  gameInstance.SendMessage('MSStartSDK', 'OnMigratePlayerPrefs', window["fetchPlayerPrefs"]);
+		} else {
+		  needMigrate = true;
+		}
+	  }
+    </script>
+	
+<script src="https://assets.msn.com/staticsb/statics/latest/msstart-games-sdk/msstart-v1.0.0-rc.19.min.js"></script>
+
+<script>
+
+// Sayaç başlangıcı (localStorage'dan oku ya da 0)
+let interstitialCounter = parseInt(localStorage.getItem('interstitialCounter') || '0');
+
+function initializeAds() {
+  try {
+    Website2APK.disableNpa();
+    Website2APK.keepScreenOn(true);
+    Website2APK.enableShowBannerAd(true);
+
+    // 45 saniyede bir banner'ı yeniden göstermeyi dene
+    setInterval(() => {
+      try {
+        Website2APK.enableShowBannerAd(true);
+      } catch (refreshError) {
+        console.log("Banner refresh error: " + refreshError);
+      }
+    }, 45000); // 45000 ms = 45 saniye
+  } catch (error) {
+    console.log("Ads init error: " + error);
+  }
+}
+
+// Reklam yükleme fonksiyonu (tanımlı olması için, gerçek yükleme yok)
+function loadAds() {
+  loadInterstitialAd();
+}
+
+// Boş yükleme fonksiyonu
+function loadInterstitialAd() {
+  // Pasif
+}
+
+async function showInterstitialAd() {
+  interstitialCounter++;
+  localStorage.setItem('interstitialCounter', interstitialCounter);
+
+  if (interstitialCounter % 4 === 0) {
+    if (typeof Website2APK !== "undefined" && Website2APK.showInterstitialAd) {
+      Website2APK.showInterstitialAd();
+      Website2APK.showToast("Sorry but we need this, thanks....");
+    }
+  
+    setTimeout(() => {
+      if (typeof gameInstance !== "undefined" && gameInstance.SendMessage) {
+        gameInstance.SendMessage('MSStartSDK', 'OnInterstitialAdClose');
+      }
+    }, 7500);
+  } else {
+    // Reklam yok, oyuna devam et
+    if (typeof gameInstance !== "undefined" && gameInstance.SendMessage) {
+      gameInstance.SendMessage('MSStartSDK', 'OnInterstitialAdClose');
+    }
+  }
+}
+
+// Ödüllü reklam (17 saniye bekletir, sahte geçiş reklamıyla)
+async function showRewardedAd() {
+  if (typeof Website2APK !== "undefined" && Website2APK.showInterstitialAd) {
+    Website2APK.showInterstitialAd();
+    Website2APK.showToast("Wait 15-20 seconds for reward...");
+  }
+
+  setTimeout(() => {
+    if (typeof gameInstance !== "undefined" && gameInstance.SendMessage) {
+      gameInstance.SendMessage('MSStartSDK', 'OnReward');
+    }
+  }, 17000);
+}
+
+// Sayfa yüklendiğinde reklamları başlat
+window.onload = () => {
+  initializeAds();
+};
+
+
+	
+ const toggleButton = document.getElementById('toggleButton');
+    const submenu = document.getElementById('submenu');
+
+    toggleButton.addEventListener('click', () => {
+      submenu.classList.toggle('show');
+      toggleButton.textContent = submenu.classList.contains('show') ? '❌' : '🔥';
+    });
+	function goTo(url) {
+    if (typeof Website2APK !== "undefined" && Website2APK.openExternal) {
+      Website2APK.openExternal(url);
+    } else {
+      window.open(url, '_blank'); // Yedek olarak tarayıcıda açar
+    }
+  }
+</script>
+
+	
+  </body>
+</html>
