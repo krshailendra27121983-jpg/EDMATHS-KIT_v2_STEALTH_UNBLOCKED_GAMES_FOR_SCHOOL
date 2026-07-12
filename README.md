@@ -6,7 +6,7 @@ An unblocked game repository built to be undetectable. It uses multiple layers o
 **Key Features:**
 - **Zero External Resources:** Every single file is hosted locally within the repo to prevent domain blocking.
 - **Stealth Tech:** Designed specifically to fool modern school "spyware."
-- **Easy Setup:** See the `how_to_upload.md` file for a step-by-step guide.
+- **Easy Setup:** See the `HOW_TO_UPLOAD.md` file for a step-by-step guide.
 
 ### Included Games:
 - **Minecraft** (Eaglercraft 1.12.2)
